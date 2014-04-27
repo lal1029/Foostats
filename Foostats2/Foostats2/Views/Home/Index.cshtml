@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="col-lg-8">
+                        <div class="hero">
+                            <div id="title">       Home of VSCS Foosball</div>
+                            @Html.Partial("AddMatch2", new ViewDataDictionary{{"Users", ViewBag.Users}})
+                        </div>
+                        <div class="row description hidden-md hidden-sm hidden-xs">
+                            <div class="col-lg-4">
+                                Play Foosball
+                                <br />
+                                <img id="soccerball" src="@Url.Content("~/Images/soccer.svg")">
+                                <div class="subtitle">Organize tournaments or play a casual game</div>
+                            </div>
+                            <div class="col-lg-4">
+                                Get Better
+                                <br />
+                                <img id="chart" src="@Url.Content("~/Images/chart.svg")">
+                                <div class="subtitle">See your past games and learn how you can improve</div>
+                            </div>
+                            <div class="col-lg-4">
+                                Win
+                                <br />
+                                <img id="trophy" src="@Url.Content("~/Images/trophy.svg")">
+                                <div class="subtitle">Compete and enter your score for fame and glory in VSCS</div>
+                            </div>
+                        </div>
+
+                    </div>
+<div class="col-lg-4" style="padding-left: 50px;">
+                        Top 10
+                        <br />
+                        <div class="row">
+                            <div id="rankings-parent">@Html.Partial("TopPlayers", (IEnumerable<Foostats2.Models.Trueskill>)ViewBag.Players)
+                                <div style="font-size: 18px; text-align: right;"><a href="@Url.Action("TopPlayers", "Player")">Full Ranking List</a></div>
+                            </div>
+                        </div>
+</div>

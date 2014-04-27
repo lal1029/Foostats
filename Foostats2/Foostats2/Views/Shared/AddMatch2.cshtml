@@ -1,0 +1,40 @@
+﻿@{
+    ViewBag.Title = "AddMatch2";
+}
+
+@using (Html.BeginForm("Add", "Match", FormMethod.Post, new { id = "add-match", onsubmit = "return validateMatch()" }))
+{
+    <div id="warnings">@Html.ValidationSummary(true)</div> 
+    <br />
+    <div class="row container">
+        <div class="col-lg-6">
+            Team One
+            <input list="aliases" type="text" autocomplete="on" id="Team1Player1" name="Team1Player1" class="form-control" placeholder="Player 1" value="@User.Identity.Name"> 
+            <datalist id="aliases">
+                @foreach (var user in ViewBag.Users)
+                {
+                    <option value="@user" />
+                }
+            </datalist>
+            <input list="aliases"type="text" autocomplete="on"  id="Team1Player2" name="Team1Player2" class="form-control" placeholder="Player 2 (optional)">
+            <input type="text" id="Score1" name="Score1" class="form-control" placeholder="Score">
+        </div>
+        <div class="col-lg-6">
+            Team Two
+            <input list="aliases" type="text" autocomplete="on" id="Team2Player1" name="Team2Player1" class="form-control" placeholder="Player 1">
+        </div>
+        <div class="col-lg-6">
+            <input list="aliases" type="text" autocomplete="on"  id="Team2Player2" name="Team2Player2" class="form-control" placeholder="Player 2 (optional)">
+        </div>
+        <div class="col-lg-6">
+            <input type="text" id="Score2" name="Score2" class="form-control" placeholder="Score">
+        </div>
+        <div class="col-lg-6"></div>
+        <div class="col-lg-6">
+            <br />
+            <button type="submit" id="submit" class="btn btn-success btn-lg">Play a game!</button>
+            <br />
+            <br />
+        </div>
+    </div>
+}

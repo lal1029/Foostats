@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Foostats2.Models.Trueskill>
+
+@{
+    ViewBag.Title = "TopPlayers";
+}
+
+<ol id="rankings">
+    @foreach (var playerTrue in Model)
+    {
+        if (playerTrue != null && playerTrue.Player != null)
+        {
+            <li><a href="@Url.Action("Profile", "Player", new {playerDisplayName = playerTrue.Player.DisplayName})">
+                    @{
+                        @(playerTrue.Player.MutableDisplayName ?? playerTrue.Player.DisplayName)
+                    }
+                </a><span style="color:#000; font-size:10pt; position: relative; top: -3px;">@Math.Round(playerTrue.ConservativeRating, 2)</span></li>
+        }
+    }
+</ol>

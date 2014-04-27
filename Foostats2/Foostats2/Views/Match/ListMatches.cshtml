@@ -1,0 +1,59 @@
+﻿@model IEnumerable<Foostats2.Models.Match>
+
+@{
+    ViewBag.Title = "ListMatches";
+}
+
+@if (ViewBag.Wins != null && ViewBag.Losses != null)
+{
+    <div class="row col-lg-12" style="text-align: left; margin-bottom: 20px;"><h3> @ViewBag.Wins Wins / @ViewBag.Losses Losses against @ViewBag.OpposingPlayer</h3>
+        </div>
+}
+
+
+<table id="match-results" cellpadding="3">
+    <tr class="table-header"><th>Date</th><th style="width: 15px; border-bottom: 0px none;"></th><th colspan="2">Team 1</th><th>Score</th><th style="width: 15px; border-bottom: 0px none;"></th><th colspan="2">Team 2</th><th>Score</th></tr>
+@foreach (var match in Model)
+{
+    @* Ensure Profile's Player is on Team 1*@
+    if (ViewBag.PreferredPlayer != null)
+    {
+        if (!(match.Team1.Player1.DisplayName == ViewBag.PreferredPlayer || (match.Team1.Player2 != null && match.Team1.Player2.DisplayName == ViewBag.PreferredPlayer)))
+        {
+            var teamCopy = match.Team1;
+            match.Team1 = match.Team2;
+            match.Team2 = teamCopy;
+            var scoreCopy = match.Score1;
+            match.Score1 = match.Score2;
+            match.Score2 = scoreCopy;
+        }
+    }
+    
+    <tr class="
+    @if (match.Score1 > match.Score2){ 
+        @:winner1 
+    } else {
+        @:winner2
+    }">
+
+            <td>@(match.Team1Validated.Value.ToString("g"))</td>
+            <td></td>
+            <td class="team1"><a href="@Url.Action("Profile", "Player", new {playerDisplayName = match.Team1.Player1.DisplayName})">@(match.Team1.Player1.MutableDisplayName ?? match.Team1.Player1.DisplayName)</a></td>
+            @if(match.Team1.Player2 != null){
+            <td class="team1"><a href="@Url.Action("Profile", "Player", new {playerDisplayName = match.Team1.Player2.DisplayName})">@(match.Team1.Player2.MutableDisplayName ?? match.Team1.Player2.DisplayName)</a></td>
+            } else {
+            <td class="null-ref team1" style="color:#dddddd;">null</td>
+            }
+            <td>@match.Score1</td>
+        
+            <td></td>
+            <td class="team2"><a href="@Url.Action("Profile", "Player", new {playerDisplayName = match.Team2.Player1.DisplayName})">@(match.Team2.Player1.MutableDisplayName ?? match.Team2.Player1.DisplayName)</a></td>
+            @if(match.Team2.Player2 != null){
+                <td class="team2"><a href="@Url.Action("Profile", "Player", new {playerDisplayName = match.Team2.Player2.DisplayName})">@(match.Team2.Player2.MutableDisplayName ?? match.Team2.Player2.DisplayName)</a></td>
+            } else {
+                <td class="null-ref team2" style="color:#dddddd;">null</td>
+            }            
+            <td>@match.Score2</td>
+    </tr>
+}
+</table>

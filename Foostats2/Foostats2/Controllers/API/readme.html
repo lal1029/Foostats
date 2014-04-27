@@ -1,0 +1,151 @@
+<html>
+    <head>
+        <title>README</title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="readme.css" media="screen" />
+<body>
+<h1>Foostats API</h1>
+<h2>Description</h2>
+<p>The foostats api allows you to interact with the foostats database through
+RESTful calls to the foostats api controllers. Through the foostats api you can</p>
+<ul>
+<li>List all players</li>
+<li>Get a player by alias, including associated win/loss and trueskill data</li>
+<li>Get a player by their display name</li>
+<li>Retrieve a list of players, ordered by trueskill or name</li>
+<li>List all matches</li>
+<li>Retrieve a list of matches ordered by most recently played</li>
+<li>Retrieve a list of matches a particular player played in</li>
+</ul>
+<h2>Player</h2>
+<h3>GET /api/PlayerApi/ListAll</h3>
+<p>Retrieves an array of all the players. See List below for example of the Player
+object being returned.</p>
+<h3>POST /api/PlayerApi/List</h3>
+<h4>Description</h4>
+<p>Retrieves an array of players. An example player object is shown below</p>
+<pre><code>{
+  &quot;Trueskill&quot;:{
+     &quot;Id&quot;:2,
+     &quot;Player&quot;:(null),
+     &quot;StandardDeviation&quot;:7.1714758070092195,
+     &quot;Mean&quot;:20.604168307008482,
+     &quot;ConservativeRating&quot;:-0.91025911401917625
+  },
+  &quot;WinLoss&quot;:{
+     &quot;Id&quot;:2,
+     &quot;Player&quot;:(null),
+     &quot;Win&quot;:0,
+     &quot;Loss&quot;:1
+  },
+  &quot;Id&quot;:2,
+  &quot;DisplayName&quot;:&quot;REDMOND\\japayne&quot;,
+  &quot;MutableDisplayName&quot;:null,
+  &quot;Password&quot;:null,
+  &quot;Salt&quot;:null
+}</code></pre>
+<h4>Sample Request</h4>
+<pre><code>POST http://localhost:25027/Api/PlayerApi/List HTTP/1.1
+Host: localhost:25027
+Content-Type: application/json
+
+{ OrderBy: &quot;Alias&quot;, Desc: true, Limit: 5, StartIndex: 2, IncludeExtendedData: true }</code></pre>
+<p>The input contains an OrderBy column, the OrderBy values supported are 
+DisplayName, Alias, Id. If IncludeExtendedData is true then you can also use the
+values Trueskill and WinLoss. This Id is an internal Id that does not correspond 
+to any external value. Sorting is done in either Descending or Ascending order,
+determined by the Desc bool value. If ommited the default value is false and
+the results will be in ascending order. If no OrderBy field is passed then 
+Desc will have no effect. Limit will limit the result set to that many results.
+Passing a StartIndex of a positive non-zero integer will result in the processor
+skipping over StartIndex-1 results (the result set will start at that index).
+For the purpose of pagination an example of usage would be setting the limit to
+5 and on the second request using a StartIndex of 6 and incrementing the start
+index each time. Note this is 1-indexed. IncludeExtendedData includes the 
+trueskill and winloss data for a player.</p>
+<h3>GET /api/PlayerApi/GetPlayerByAlias?alias=&lt;alias&gt;</h3>
+<h4>Description</h4>
+<p>Retrieves a players data. Looks up a player based on Alias. If the player could
+not be found then returns 404 with the reason &quot;Player &#39;{0}&#39; could not be found&quot;.</p>
+<h3>GET /api/GetPlayerByDisplayName?displayName=&lt;displayName&gt;</h3>
+<h4>Description</h4>
+<p>Retrieves a list of players data based on the players display names. If no
+players could be found returns an empty list.</p>
+<h2>Matches</h2>
+<h3>GET /api/MatchApi/ListAll</h3>
+<p>Retrieves an array of all matches in the database, up to 1000 records. If over
+1000 records would be returned, use /List with StartIndex and Limit to paginate
+the data, or set a larger Limit (not recommended).</p>
+<h3>POST /api/MatchApi/List</h3>
+<h4>Description</h4>
+<p>Retrieves a list of matches that meet the critera, ordered in a particular 
+fashion specified in the input. An example of a match object is shown below.
+Note extended player data such as trueskill and win loss ratios are not shown.
+To retrieve this data make a separate request to the PlayerApi.</p>
+<pre><code>[
+   {
+      &quot;Id&quot;:1,
+      &quot;Team1&quot;:{
+         &quot;Id&quot;:1,
+         &quot;Player1&quot;:{
+            &quot;Id&quot;:1,
+            &quot;DisplayName&quot;:&quot;REDMOND\\amayoub&quot;,
+            &quot;MutableDisplayName&quot;:null,
+            &quot;Password&quot;:null,
+            &quot;Salt&quot;:null
+         },
+         &quot;Player2&quot;:null,
+         &quot;DisplayName&quot;:&quot;REDMOND\\amayoub&quot;
+      },
+      &quot;Team2&quot;:{
+         &quot;Id&quot;:2,
+         &quot;Player1&quot;:{
+            &quot;Id&quot;:2,
+            &quot;DisplayName&quot;:&quot;REDMOND\\japayne&quot;,
+            &quot;MutableDisplayName&quot;:null,
+            &quot;Password&quot;:null,
+            &quot;Salt&quot;:null
+         },
+         &quot;Player2&quot;:null,
+         &quot;DisplayName&quot;:&quot;REDMOND\\japayne&quot;
+      },
+      &quot;Score1&quot;:8,
+      &quot;Score2&quot;:2,
+      &quot;Team1Validated&quot;:&quot;2013-11-08T23:59:13.68&quot;,
+      &quot;Team2Validated&quot;:null
+   }
+]</code></pre>
+<h4>Sample Request</h4>
+<pre><code>POST http://localhost:25027/Api/MatchApi/List HTTP/1.1
+Host: localhost:25027
+Content-Type: application/json
+
+{ OrderBy: &quot;Date&quot;, Desc: true, Limit: 5, SearchKey: &quot;Alias&quot;, SearchTerm: &quot;REDMOND\\amayoub&quot;}</code></pre>
+<p>There is only one valid OrderBy column so far which is Date, anything else
+will result in an error. You can also omit date for now and the default
+will be sorted by date. Desc does similar to players and will sort the matches
+in descending order if true. Limit will limit the number of results and 
+StartIndex will start the results at a specific index. The functionality of 
+pagination is the same as Player /List. Readers are recommended to look over
+the documentation for that for more details. So far the only supported search
+keys are &quot;Alias&quot;.</p>
+<h3>POST /api/MatchApi/AddMatch</h3>
+<h4>Description</h4>
+<p>Adds a match to the database, if the player doesn&#39;t exist yet (determined by
+player alias) then the player is added to the database. This is the only way
+to create a player.</p>
+<h4>Sample Request</h4>
+<pre><code>POST http://localhost:25027/Api/MatchApi/AddMatch HTTP/1.1
+Host: localhost:25027
+Content-Type: application/json
+
+{ 
+    Team1Player1Alias: &quot;REDMOND\\amayoub&quot;, 
+    Team1Player2Alias: &quot;REDMOND\\kasun&quot;,
+    Team2Player1Alias: &quot;REDMOND\\japayne&quot;,
+    Team2Player2Alias: &quot;REDMOND\\anhiggin&quot;,
+    Team1Score: 2,
+    Team2Score: 8
+}</code></pre>
+</body>
+</html>

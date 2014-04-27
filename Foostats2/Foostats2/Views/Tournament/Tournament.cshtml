@@ -1,0 +1,47 @@
+﻿@{
+    ViewBag.Title = "Tournament";
+}
+
+@Scripts.Render("~/Scripts/jquery.bracket.min.js")
+@Styles.Render("~/Content/jquery.bracket.min.css")
+@Scripts.Render("~/Scripts/setupTournament.js")
+
+
+
+<h2>Create a tournament bracket</h2>
+<datalist id="aliases">
+            @foreach (var user in ViewBag.Users)
+            {
+                <option value="@user" />
+            }    
+</datalist>
+
+<div id ="tournamentContainer">
+    <div id="tournamentUsers" class="tournamentMaker" >
+        <div class="row">
+            <div class="col-md-2"> Team 1</div>
+            <div class="col-md-5">
+              <input list="aliases" type="text" autocomplete="on" id="Team1Player1" name="Team1Player1" class="form-control" placeholder="Player 1" value=""> 
+            </div>
+            <div class="col-md-5">
+                <input list="aliases" type="text" autocomplete="on" id="Team1Player2" name="Team1Player2" class="form-control" placeholder="Player 2" value=""> 
+            </div>
+        </div>
+    </div>
+
+    <div id="createBracket">
+        <button type="submit" id="submit" class="btn btn-success btn-lg">Create bracket!</button>
+    </div>
+</div>
+
+<div id="minimal">
+
+    <div class="demo">
+
+    </div>
+</div>
+
+<div id="submitMatches">
+    <button type="submit" id="submitTournament" class="btn btn-success btn-lg" style="display:none">Submit Tournament</button>
+</div>
+

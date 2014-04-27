@@ -1,0 +1,86 @@
+﻿div.login{
+    font-size:15px;
+    text-align:left;
+    height:25px;
+    margin-top:30px;
+}
+div.footer{
+    font-size:15px;
+    margin-bottom:30px;
+}
+div#header{
+    font-size:55px;
+    font-weight:600;
+    color:green;
+    text-align:left;
+    margin-bottom:30px; 
+}
+div#title{
+    font-size:45px;
+}
+img{
+    margin-top:20px;
+    margin-bottom: 30px;
+}
+div.toolbar{
+    color:#E6E6E6; 
+    height:25px;
+}
+div.subtitle{
+    font-size:35px;
+}
+div#warnings{
+    font-size:15px;
+}
+body{
+    text-align:center;
+    font-size:25px;
+    color:#484848;
+    font-family:'Open Sans', sans-serif;
+}
+div.hero{
+    padding-top:20px;
+    padding-left:20px;
+    padding-right:20px;
+    background-color:#EBEBE4; 
+}
+
+div.description{
+    margin-top: 30px;
+    margin-bottom: 40px;
+}
+div.subtitle{
+    font-size:20px;
+}
+div.right{
+    float:right;
+}
+
+#rankings {
+    text-align: left;
+}
+
+#match-results td {
+    padding: 7px;
+    text-align: center;
+}
+
+#match-results {
+    font-size: 18px;
+}
+
+.winner1 .team1 {
+    background-color: #F6F6F6;
+}
+
+.winner2 .team2 {
+    background-color: #F6F6F6;
+}
+
+#match-results .table-header th {
+    border-bottom: 1px solid #aaaaaa;
+}
+
+.tournamentMaker {
+    margin-bottom: 10px;
+}

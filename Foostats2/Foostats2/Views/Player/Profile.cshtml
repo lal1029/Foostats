@@ -1,0 +1,96 @@
+﻿@model Foostats2.Models.Player
+
+@{
+    ViewBag.Title = "Profile";
+}
+
+@if (Model != null)
+{
+    <script type='text/javascript'>
+          google.load('visualization', '1', { 'packages': ['annotatedtimeline'] });
+          google.setOnLoadCallback(drawChart);
+          function drawChart() {
+              $.ajax({
+                  url: "@Url.Action("MatchPerDay", "Player", new { player = Model.DisplayName})",
+              }).done(function (matches) {
+                  var data = new google.visualization.DataTable();
+                  data.addColumn('date', 'Date');
+                  data.addColumn('number', 'Games Played');
+                  var matchesToAdd = new Array();
+                  for (point in matches) {
+                      matchesToAdd.push([new Date(matches[point].Key.Year, matches[point].Key.Month - 1, matches[point].Key.Day), matches[point].Value]);
+                  }
+
+                  data.addRows(matchesToAdd);
+                  var chart = new google.visualization.AnnotatedTimeLine(document.getElementById('chart_div'));
+                  chart.draw(data, { displayAnnotations: true });
+              });
+          }
+    </script>
+    <div style="text-align:left;">
+        <div id="summary" class="hero row col-lg-12" style="padding-bottom: 20px; margin-bottom: 20px;">
+            <div class="col-lg-1">
+                @if (ViewBag.Avatar != null)
+                      {
+                          <img src="@Url.Content(ViewBag.Avatar)" style="width: 72px; height: 72px; border-radius: 36px; -webkit-border-radius: 36px; -moz-border-radius: 36px; margin-top: 25px;"/>
+                      }
+            </div>
+            <div class="col-lg-9" style="margin-top:-10px;">
+                <h2>
+                    @if (Model.MutableDisplayName != null)
+                    {
+                        @:@Model.MutableDisplayName &lt;@Model.DisplayName&gt;
+                    }
+                    else
+                    {
+                        @:@Model.DisplayName
+                    }
+                    
+                    @if (User.Identity.Name == @Model.DisplayName)
+                    {
+                        <span class="glyphicon glyphicon-edit" onClick="$('#nameEditBlock').toggle()" style="font-size: 12pt; position: relative; top: -3px;"></span>
+                        <div id="nameEditBlock" style="display:none; font-size: 12pt; margin-top: 10px;">
+                            @using (Html.BeginForm("SetMutableDisplayName", "Player", FormMethod.Post, new {id = "add-mutabledisplay"}))
+                            {
+                                <label for="mutableDisplayName">Display Name: </label>
+                                <input type="text" name="mutableDisplayName" />
+                                <input type="submit" value="Change" />
+                            }
+                        </div>
+                    }
+                </h2>
+                
+    
+                @if (ViewBag.Trueskill != null)
+                {
+                    <div>Trueskill: @Math.Round(ViewBag.Trueskill.ConservativeRating, 2)</div>
+                }
+
+                @if (ViewBag.WinLoss != null)
+                {
+                    <div>Games (Won/Lost): @ViewBag.WinLoss.Win / @ViewBag.WinLoss.Loss</div>
+                }
+            </div>
+            <div class="col-lg-2" style="padding-top: 40px;">
+                @if (User.Identity.Name != @Model.DisplayName)
+                {
+                    <a href="@Url.Action("GetRivalry", "Match", new { playerDisplayName = Model.DisplayName })">Show Rivalry</a>
+                }
+            </div>
+        </div>
+        
+        @if (ViewBag.Matches != null)
+        {
+            <div class="row col-lg-12">
+            <h3>Match History <a href="@Url.Action("GetByPlayerDisplay", "Match", new {playerDisplayName = @Model.DisplayName})" style="font-size: 10pt; text-decoration: none;">Full History</a></h3>
+            @Html.Partial("../Match/ListMatches", (IEnumerable<Foostats2.Models.Match>) ViewBag.Matches, new ViewDataDictionary() { {"PreferredPlayer", Model.DisplayName} })
+            </div>
+        }
+    
+    <div class="row col-lg-12">
+        <h3>Games Over Time</h3>
+        <div id='chart_div' style='width: 700px; height: 240px;'></div>
+    </div>
+
+    </div>
+}
